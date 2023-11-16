@@ -111,6 +111,7 @@ optional arguments:
   --background COLOR    background color, either by name or by hex code (e.g. black or "#ff0000", default: None)
   --cropmarks, --no-cropmarks
                         add crop marks (default: True)
+  --separate            create a separate file for each different faces of cards (useful to separate transforming cards with more than one image). The file name is <outfile>_<index_of_face>.<outfile_extension>
 ```
 
 ### convert

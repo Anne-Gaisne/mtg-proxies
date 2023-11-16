@@ -15,6 +15,12 @@ def papersize(string: str) -> np.ndarray:
         return np.array([float(split[0]), float(split[1])])
     raise argparse.ArgumentTypeError()
 
+def get_file_name(index: int, file_path: str) -> str:
+    if index == 1:
+        return file_path
+    else:
+        return "{0}_{2}.{1}".format(*file_path.rsplit('.', 1) + [index]) 
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Prepare a decklist for printing.")
@@ -54,38 +60,41 @@ if __name__ == "__main__":
         metavar="COLOR",
     )
     parser.add_argument("--cropmarks", action=argparse.BooleanOptionalAction, default=True, help="add crop marks")
+    parser.add_argument("--separate", action=argparse.BooleanOptionalAction, default=False, help="create a separate file for each different faces of cards (useful to separate transforming cards with more than one image). The file name is <outfile>_<index_of_face>.<outfile_extension>")
     args = parser.parse_args()
 
     # Parse decklist
     decklist = parse_decklist_spec(args.decklist)
 
     # Fetch scans
-    images = fetch_scans_scryfall(decklist)
+    all_images = fetch_scans_scryfall(decklist, args.separate)
+        
+    for index, images in enumerate(all_images):
+        output_file_path = get_file_name(index + 1, args.outfile)
+        # Plot cards
+        if output_file_path.endswith(".pdf"):
+            import matplotlib.colors as colors
 
-    # Plot cards
-    if args.outfile.endswith(".pdf"):
-        import matplotlib.colors as colors
+            background_color = args.background
+            if background_color is not None:
+                background_color = (np.array(colors.to_rgb(background_color)) * 255).astype(int)
 
-        background_color = args.background
-        if background_color is not None:
-            background_color = (np.array(colors.to_rgb(background_color)) * 255).astype(int)
-
-        print_cards_fpdf(
-            images,
-            args.outfile,
-            papersize=args.paper * 25.4,
-            cardsize=np.array([2.5, 3.5]) * 25.4 * args.scale,
-            border_crop=args.border_crop,
-            background_color=background_color,
-            cropmarks=args.cropmarks,
-        )
-    else:
-        print_cards_matplotlib(
-            images,
-            args.outfile,
-            papersize=args.paper,
-            cardsize=np.array([2.5, 3.5]) * args.scale,
-            dpi=args.dpi,
-            border_crop=args.border_crop,
-            background_color=args.background,
-        )
+            print_cards_fpdf(
+                images,
+                output_file_path,
+                papersize=args.paper * 25.4,
+                cardsize=np.array([2.5, 3.5]) * 25.4 * args.scale,
+                border_crop=args.border_crop,
+                background_color=background_color,
+                cropmarks=args.cropmarks,
+            )
+        else:
+            print_cards_matplotlib(
+                images,
+                output_file_path,
+                papersize=args.paper,
+                cardsize=np.array([2.5, 3.5]) * args.scale,
+                dpi=args.dpi,
+                border_crop=args.border_crop,
+                background_color=args.background,
+            )
