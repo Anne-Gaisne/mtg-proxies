@@ -70,7 +70,7 @@ def get_print_warnings(card):
     return warnings
 
 
-def validate_print(card_name: str, set_id: str, collector_number: str):
+def validate_print(card_name: str, set_id: str, collector_number: str, lang: str):
     """Validate a print against the Scryfall database.
 
     Assumes card name is valid.
@@ -81,18 +81,15 @@ def validate_print(card_name: str, set_id: str, collector_number: str):
     """
     warnings = []
 
-    if set_id is None:
+    card = scryfall.get_card(card_name, set_id, collector_number, lang)
+    if card is None:
         card = scryfall.recommend_print(card_name=card_name)
         # Warn for tokens, as they are not unique by name
         if card["layout"] in ["token", "double_faced_token"]:
             warnings.append(
                 ("WARNING", f"Tokens are not unique by name. Assuming '{card_name}' is a '{format_token(card)}'.")
             )
-    else:
-        card = scryfall.get_card(card_name, set_id, collector_number)
-        if card is None:  # No exact match
-            # Find alternative print
-            card = scryfall.recommend_print(card_name=card_name)
+        else:
             warnings.append(
                 (
                     "WARNING",
@@ -100,6 +97,7 @@ def validate_print(card_name: str, set_id: str, collector_number: str):
                     + f" Using {format_print(card)} instead.",
                 )
             )
+            
 
     # Warnings for low-quality scans
     quality_warnings = get_print_warnings(card)

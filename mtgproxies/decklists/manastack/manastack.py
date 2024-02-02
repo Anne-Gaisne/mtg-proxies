@@ -6,7 +6,7 @@ from mtgproxies.decklists import Decklist
 from mtgproxies.decklists.sanitizing import validate_card_name, validate_print
 
 
-def parse_decklist(manastack_id: str, zones: list[str] = ["commander", "mainboard"]):
+def parse_decklist(manastack_id: str, zones: list[str] = ["commander", "mainboard"], lang: str = "fr"):
     """Parse a decklist from manastack.
 
     Args:
@@ -41,7 +41,7 @@ def parse_decklist(manastack_id: str, zones: list[str] = ["commander", "mainboar
                     continue
 
                 # Validate card print
-                card, warnings_print = validate_print(card_name, set_id, collector_number)
+                card, warnings_print = validate_print(card_name, set_id, collector_number, lang)
 
                 decklist.append_card(count, card)
                 warnings.extend([(decklist.entries[-1], level, msg) for level, msg in warnings_name + warnings_print])

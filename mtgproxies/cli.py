@@ -4,7 +4,7 @@ from mtgproxies.decklists import archidekt, manastack, parse_decklist
 from mtgproxies.decklists.decklist import Decklist
 
 
-def parse_decklist_spec(decklist_spec: str, warn_levels=["ERROR", "WARNING", "COSMETIC"]) -> Decklist:
+def parse_decklist_spec(decklist_spec: str, warn_levels=["ERROR", "WARNING", "COSMETIC"], lang: str = "fr") -> Decklist:
     """Attempt to parse a decklist from different locations.
 
     Args:
@@ -13,15 +13,15 @@ def parse_decklist_spec(decklist_spec: str, warn_levels=["ERROR", "WARNING", "CO
     """
     print("Parsing decklist ...")
     if Path(decklist_spec).is_file():  # Decklist is file
-        decklist, ok, warnings = parse_decklist(decklist_spec)
+        decklist, ok, warnings = parse_decklist(decklist_spec, lang)
     elif decklist_spec.lower().startswith("manastack:") and decklist_spec.split(":")[-1].isdigit():
         # Decklist on Manastack
         manastack_id = decklist_spec.split(":")[-1]
-        decklist, ok, warnings = manastack.parse_decklist(manastack_id)
+        decklist, ok, warnings = manastack.parse_decklist(manastack_id, lang)
     elif decklist_spec.lower().startswith("archidekt:") and decklist_spec.split(":")[-1].isdigit():
         # Decklist on Archidekt
         manastack_id = decklist_spec.split(":")[-1]
-        decklist, ok, warnings = archidekt.parse_decklist(manastack_id)
+        decklist, ok, warnings = archidekt.parse_decklist(manastack_id, lang)
     else:
         print(f"Cant find decklist '{decklist_spec}'")
         quit()

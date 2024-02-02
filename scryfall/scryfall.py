@@ -130,7 +130,7 @@ def canonic_card_name(card_name: str) -> str:
     return card_name
 
 
-def get_card(card_name: str, set_id: str = None, collector_number: str = None) -> dict | None:
+def get_card(card_name: str, set_id: str = None, collector_number: str = None, lang: str = None) -> dict | None:
     """Find a card by it's name and possibly set and collector number.
 
     In case, the Scryfall database contains multiple cards, the first is returned.
@@ -143,18 +143,18 @@ def get_card(card_name: str, set_id: str = None, collector_number: str = None) -
     Returns:
         card: Dictionary of card, or `None` if not found.
     """
-    cards = get_cards(name=card_name, set=set_id, collector_number=collector_number)
+    cards = get_cards(name=card_name, set=set_id, collector_number=collector_number, lang=lang)
 
     return cards[0] if len(cards) > 0 else None
 
 
-def get_cards(database: str = "default_cards", **kwargs):
+def get_cards(database: str = "all_cards", **kwargs):
     """Get all cards matching certain attributes.
 
     Matching is case insensitive.
 
     Args:
-        kwargs: (key, value) pairs, e.g. `name="Tendershoot Dryad", set="RIX"`.
+        kwargs: (key, value) pairs, e.g. `name="Tendershoot Dryad", set="RIX"`, lang="fr".
                 keys with a `None` value are ignored
 
     Returns:
