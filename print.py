@@ -69,8 +69,10 @@ if __name__ == "__main__":
     parser.add_argument("--separate", action=argparse.BooleanOptionalAction, default=False, help="create a separate file for each different faces of cards (useful to separate transforming cards with more than one image). The file name is <outfile>_<index_of_face>.<outfile_extension>")
     args = parser.parse_args()
 
+    print(args)
+
     # Parse decklist
-    decklist = parse_decklist_spec(args.decklist, args.lang)
+    decklist = parse_decklist_spec(args.decklist, lang=args.lang)
 
     # Fetch scans
     all_images = fetch_scans_scryfall(decklist, args.separate)

@@ -11,7 +11,7 @@ def parse_decklist_spec(decklist_spec: str, warn_levels=["ERROR", "WARNING", "CO
         decklist_spec: File path or ManaStack id
         warn_levels: Levels of warnings to show
     """
-    print("Parsing decklist ...")
+    print(f"Parsing decklist for language : {lang}...")
     if Path(decklist_spec).is_file():  # Decklist is file
         decklist, ok, warnings = parse_decklist(decklist_spec, lang)
     elif decklist_spec.lower().startswith("manastack:") and decklist_spec.split(":")[-1].isdigit():

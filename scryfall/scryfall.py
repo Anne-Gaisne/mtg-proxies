@@ -144,7 +144,8 @@ def get_card(card_name: str, set_id: str = None, collector_number: str = None, l
         card: Dictionary of card, or `None` if not found.
     """
     cards = get_cards(name=card_name, set=set_id, collector_number=collector_number, lang=lang)
-
+    if len(cards) > 1:
+        print(f"nb card {card_name} in dict {len(cards)}")
     return cards[0] if len(cards) > 0 else None
 
 
@@ -168,7 +169,7 @@ def get_cards(database: str = "all_cards", **kwargs):
             if key == "name":  # Normalize card name
                 value = canonic_card_name(value)
             cards = [card for card in cards if key in card and card[key].lower() == value]
-
+    sorted(cards, key=lambda v: v["highres_image"])
     return cards
 
 

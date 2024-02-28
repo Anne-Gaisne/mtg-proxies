@@ -83,7 +83,10 @@ def validate_print(card_name: str, set_id: str, collector_number: str, lang: str
 
     card = scryfall.get_card(card_name, set_id, collector_number, lang)
     if card is None:
-        card = scryfall.recommend_print(card_name=card_name)
+        if set_id is not None:
+            card = scryfall.get_card(card_name, set_id, collector_number, "en")
+        if card is None:
+            card = scryfall.recommend_print(card_name=card_name)
         # Warn for tokens, as they are not unique by name
         if card["layout"] in ["token", "double_faced_token"]:
             warnings.append(
@@ -96,8 +99,7 @@ def validate_print(card_name: str, set_id: str, collector_number: str, lang: str
                     f"Unable to find scan of {format_print(card_name, set_id, collector_number)}."
                     + f" Using {format_print(card)} instead.",
                 )
-            )
-            
+            )            
 
     # Warnings for low-quality scans
     quality_warnings = get_print_warnings(card)
